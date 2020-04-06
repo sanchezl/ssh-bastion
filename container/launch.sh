@@ -4,6 +4,11 @@ set -e
 
 user=core
 
+# generate host keys if not already provided
+for i in rsa ecdsa ed25519 ; do
+  [ ! -f /etc/ssh/ssh_host_${i}_key ] && /usr/libexec/openssh/sshd-keygen $i
+done
+
 # get the name of the machineconfig used by the first master
 machineconfig=$(oc get node -l 'node-role.kubernetes.io/master' -o json | jq -r '.items[0].metadata.annotations."machineconfiguration.openshift.io/desiredConfig"')
 
